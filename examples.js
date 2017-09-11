@@ -2,7 +2,7 @@ const dbl = require("dbl.js");
 
 let dblclient = new dbl.Client({
     dbltoken: "Your Discord Bot List token you get from https://discordbots.org/api/docs",
-    id: "Your bot user id make sure this is your bot or it wont work"
+    id: "Bot ID"
 });
 
 // Get vote data/count.
