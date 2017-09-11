@@ -1,6 +1,6 @@
 {
   "name": "dbl.js",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A api wrapper for Discord Bot List api",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/TheCyberRonin/dbl.js#readme",
   "dependencies": {
-    "snekfetch": "^3.2.4"
+    "snekfetch": "^3.3.0"
   }
 }

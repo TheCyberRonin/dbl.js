@@ -16,27 +16,28 @@ class DiscordBotsCLient {
    * @param {ClientOptions} options - The clients options.
    */
   constructor(options) {
-      /**The API token for Discord Bot List(https://discordbots.org/api/docs).
-       * @type {string[]}
-       */
-      this.dbltoken = options.dbltoken;
-      /**The bot id for your bot.
-       * @type {string[]}
-       */
-      this.id = options.id;
-      //misc members
-      this.dblapiUrl = "https://discordbots.org/api";
-      //error checking options
-      if (options.id === undefined) throw Error("Please specify a bot id in the client options.");
+    /**The API token for Discord Bot List(https://discordbots.org/api/docs).
+     * @type {string[]}
+     */
+    this.dbltoken = options.dbltoken;
+    /**The bot id for your bot.
+     * @type {string[]}
+     */
+    this.id = options.id;
+    //misc members
+    this.dblapiUrl = "https://discordbots.org/api";
+    //error checking options
+    if (options.id === undefined) throw Error("Please specify a bot id in the client options.");
   }
   // Discord Bot List
 
   /**Returns vote data from your bot.(Discord Bot List)
    * Bot owner only!
+   * @param {boolean} [idOnly = false] - Optional, returns the IDs of the people that upvoted.
    * @returns {Promise<Object>}
    */
-  getVotes() {
-      return this._get(`/bots/${this.id}/votes`);
+  getVotes(idOnly) {
+    return idOnly ? this._get(`/bots/${this.id}/votes`,{onlyids: true} ): this._get(`/bots/${this.id}/votes`);
   }
   /**Returns server and shard data from a bot id(Discord Bot List)
    * @type {string}
@@ -44,9 +45,9 @@ class DiscordBotsCLient {
    * @param {string} id - Bot id
    */
   getBotStats(id) {
-      return this._get(`/bots/${id}/stats`, {
-          id: id
-      });
+    return this._get(`/bots/${id}/stats`, {
+      id: id
+    });
   }
   /**
    * Posts server stats to ur bot (Discord Bot List)
@@ -58,30 +59,29 @@ class DiscordBotsCLient {
    * @returns {Promise} - this will send it to DBL yaya.
    */
   postServerStats(statsObj) {
-      if (statsObj.serverCount && statsObj.shardID && statsObj.shardCount) {
-
-          return this._post(`/bots/${this.id}/stats`, {
-              "server_count": statsObj.serverCount,
-              "shard_id": statsObj.shardID,
-              "shard_count": statsObj.shardCount
-          });
-      }
-      else if (statsObj.serverCount && statsObj.shardCount) {
-          return this._post(`/bots/${this.id}/stats`, {
-              "server_count": statsObj.serverCount,
-              "shard_count": statsObj.shardCount
-          });
-      }
-      else if (statsObj.shards) {
-          //should be an array
-          return this._post(`/bots/${this.id}/stats`, {
-              "shards": statsObj.shards
-          });
-      } else {
-          return this._post(`/bots/${this.id}/stats`, {
-              "server_count": statsObj.serverCount
-          });
-      }
+    if (statsObj.serverCount && statsObj.shardID && statsObj.shardCount) {
+      return this._post(`/bots/${this.id}/stats`, {
+        "server_count": statsObj.serverCount,
+        "shard_id": statsObj.shardID,
+        "shard_count": statsObj.shardCount
+      });
+    }
+    else if (statsObj.serverCount && statsObj.shardCount) {
+      return this._post(`/bots/${this.id}/stats`, {
+        "server_count": statsObj.serverCount,
+        "shard_count": statsObj.shardCount
+      });
+    }
+    else if (statsObj.shards) {
+      //should be an array
+      return this._post(`/bots/${this.id}/stats`, {
+        "shards": statsObj.shards
+      });
+    } else {
+      return this._post(`/bots/${this.id}/stats`, {
+        "server_count": statsObj.serverCount
+      });
+    }
   }
   /**Gets user data from DBL website (they do have to be cached on the website)(Discord Bot List)
    * @type {string}
@@ -89,9 +89,9 @@ class DiscordBotsCLient {
    * @param {string} id - User id
    */
   getUserData(id) {
-      return this._get(`/users/${id}`, {
-          id: id
-      });
+    return this._get(`/users/${id}`, {
+      id: id
+    });
   }
   /**Gets bot data from DBL website(Discord Bot List)
   * @type {string}
@@ -99,40 +99,46 @@ class DiscordBotsCLient {
   * @param {string} id - Bot id
   */
   getBotData(id) {
-      return this._get(`/bots/${id}`, {
-          id: id
-      });
+    return this._get(`/bots/${id}`, {
+      id: id
+    });
   }
   /**Wrapper for getting data using snekfetch
    * @param {string} endpoint 
-   * @param {string} query
+   * @param {object} query
    */
   _get(endpoint, query) {
-      return new Promise((resolve, reject) => {
-          get((this.dblapiUrl) + endpoint)
-              .set("Authorization", this.dbltoken)
-              .query(query || {})
-              .then(res => {
-                  if (res.status !== 200) return reject(res);
-                  return resolve(res.body);
-              });
-      });
+    return new Promise((resolve, reject) => {
+      get((this.dblapiUrl) + endpoint)
+        .set("Authorization", this.dbltoken)
+        .query(query || {})
+        .then(res => {
+          if (res.status !== 200) return reject(res);
+          return resolve(res.body);
+        }).catch((err) =>
+        {
+          reject(err);
+        });
+    });
   }
   /**Wrapper for posting data using snekfetch
    * @param {string} endpoint 
-   * @param {string} query 
+   * @param {object} query 
    */
   _post(endpoint, query) {
-      return new Promise((resolve, reject) => {
-          if (!query) reject(new Error("No query in post."));
-          post((this.dblapiUrl) + endpoint)
-              .set("Authorization", this.dbltoken)
-              .send(query)
-              .then(res => {
-                  if (res.status !== 200) return reject(res);
-                  return resolve(res.body);
-              });
-      });
+    return new Promise((resolve, reject) => {
+      if (!query) reject(new Error("No query in post."));
+      post((this.dblapiUrl) + endpoint)
+        .set("Authorization", this.dbltoken)
+        .send(query)
+        .then(res => {
+          if (res.status !== 200) return reject(res);
+          return resolve(res.body);
+        }).catch((err) =>
+        {
+          reject(err);
+        });
+    });
   }
 }
 
