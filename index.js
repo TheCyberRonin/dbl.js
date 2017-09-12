@@ -84,7 +84,6 @@ class DiscordBotsCLient {
     }
   }
   /**Gets user data from DBL website (they do have to be cached on the website)(Discord Bot List)
-   * @type {string}
    * @returns {Promise<Object>}
    * @param {string} id - User id
    */
@@ -94,7 +93,6 @@ class DiscordBotsCLient {
     });
   }
   /**Gets bot data from DBL website(Discord Bot List)
-  * @type {string}
   * @returns {Promise<Object>}
   * @param {string} id - Bot id
   */
@@ -102,6 +100,13 @@ class DiscordBotsCLient {
     return this._get(`/bots/${id}`, {
       id: id
     });
+  }
+  /**Gets the bot data for all bots owned by the user
+   * @returns {Promise<Object>}
+   * @param {string} id - User id
+   */
+  getBotsOwned(id) {
+    return this._get(`/bots`, {search: `owners,${id}`});
   }
   /**Wrapper for getting data using snekfetch
    * @param {string} endpoint 

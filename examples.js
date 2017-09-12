@@ -30,6 +30,12 @@ dblClient.getBotData("A bot ID, not a user id ").then((stats) => {
   console.log(stats);
 }).catch((e) => console.log(`${e}`));
 
+//gets the bot data for the bots that are owned by a user.
+dblClient.getBotsOwned("User ID").then((stats) =>
+{
+  console.log(stats);
+}).catch((e) => console.log(`${e}`));
+
 /* Post server count to DBL(Discord Bot List) 
 You have three options to use for posting stats
 { serverCount: 122} - Used for just posting server count.
